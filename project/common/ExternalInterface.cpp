@@ -144,7 +144,44 @@ static void ndllexample_sample_method_void (value inputValue) {
 DEFINE_PRIME1v (ndllexample_sample_method_void);
 */
 
+static void ndllexample_update_audio_visualizer(value samples,
+                                                value audioMembers,
+                                                double scaleMultiplier,
+                                                int halfLength) {
+  int audioLength = val_array_size(audioMembers);
+  int audioLengths = audioLength - 1;
 
+  int scale_y_id = val_id("y");
+  int scale_id = val_id("scale");
+  int alpha_id = val_id("alpha");
+
+  for (int i = 0; i < halfLength; i++) {
+    double sample = val_float(val_array_i(samples, i));
+    double scaleValue = sample * scaleMultiplier;
+
+    value sprite = val_array_i(audioMembers, i);
+    value sprite_2 = val_array_i(audioMembers, audioLengths - i);
+
+    value scale1 = val_field(sprite, scale_id);
+    value scale2 = val_field(sprite_2, scale_id);
+
+    alloc_field(scale1, scale_y_id, alloc_float(scaleValue));
+    alloc_field(scale2, scale_y_id, alloc_float(scaleValue));
+
+    alloc_field(sprite, alpha_id, alloc_float(sample));
+    alloc_field(sprite_2, alpha_id, alloc_float(sample));
+  }
+
+  if (audioLength % 2 == 1) {
+    value sprite = val_array_i(audioMembers, halfLength);
+    double sample = val_float(val_array_i(samples, halfLength));
+
+    value scale = val_field(sprite, scale_id);
+    alloc_field(scale, scale_y_id, alloc_float(sample * scaleMultiplier));
+    alloc_field(sprite, alpha_id, alloc_float(sample));
+  }
+}
+DEFINE_PRIME4v(ndllexample_update_audio_visualizer);
 
 extern "C" void ndllexample_main () {
 	
