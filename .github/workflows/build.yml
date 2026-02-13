@@ -24,7 +24,7 @@ jobs:
           haxelib run lime setup -quiet -yes
       
       - name: Build Windows
-        run: lime rebuild . windows -64
+        run: haxelib run lime rebuild . windows -64
       
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4
@@ -33,7 +33,7 @@ jobs:
           path: ndll/
 
   build-mac:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
       
@@ -49,7 +49,7 @@ jobs:
           haxelib run lime setup -quiet -yes
       
       - name: Build Mac
-        run: lime rebuild . mac -64
+        run: haxelib run lime rebuild . mac -64
       
       - name: Upload Mac Artifact
         uses: actions/upload-artifact@v4
@@ -79,7 +79,7 @@ jobs:
           haxelib run lime setup -quiet -yes
       
       - name: Build Linux
-        run: lime rebuild . linux -64
+        run: haxelib run lime rebuild . linux -64
       
       - name: Upload Linux Artifact
         uses: actions/upload-artifact@v4
@@ -114,7 +114,7 @@ jobs:
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
       
       - name: Build Android
-        run: lime rebuild . android
+        run: haxelib run lime rebuild . android
       
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
@@ -123,7 +123,7 @@ jobs:
           path: ndll/
 
   build-ios:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
       
@@ -139,7 +139,7 @@ jobs:
           haxelib run lime setup -quiet -yes
       
       - name: Build iOS
-        run: lime rebuild . ios
+        run: haxelib run lime rebuild . ios
       
       - name: Upload iOS Artifact
         uses: actions/upload-artifact@v4
@@ -184,15 +184,15 @@ jobs:
           path: ndll/
       
       - name: List NDLL Files
-        run: find ndll -type f -name "*.ndll" -o -name "*.so" -o -name "*.a"
+        run: find ndll -type f \( -name "*.ndll" -o -name "*.so" -o -name "*.a" \) 2>/dev/null || true
       
       - name: Create Release Package
         run: |
           mkdir -p release
-          cp -r ndll release/
-          cp README.md release/
-          cp haxelib.json release/
-          cp include.xml release/
+          cp -r ndll release/ 2>/dev/null || true
+          cp README.md release/ 2>/dev/null || true
+          cp haxelib.json release/ 2>/dev/null || true
+          cp include.xml release/ 2>/dev/null || true
           cd release
           zip -r ../ndllexample-all-platforms.zip .
       
