@@ -159,18 +159,18 @@ jobs:
               lipo -create ndllexample.ndll ndllexample-ios.ndll -output ndllexample-ios-merged.ndll
               rm -f ndllexample.ndll ndllexample.ndll.hash ndllexample-ios.ndll ndllexample-ios.ndll.hash
               mv ndllexample-ios-merged.ndll ndllexample-ios.ndll
-              md5sum ndllexample-ios.ndll | cut -d' ' -f1 > ndllexample-ios.ndll.hash
+              printf '%s' "$(md5sum ndllexample-ios.ndll | cut -d' ' -f1)" > ndllexample-ios.ndll.hash
               echo "Merged iOS architectures successfully"
             elif [ -f "ndllexample-ios.ndll" ]; then
               echo "Only ndllexample-ios.ndll found, keeping it"
-              [ ! -f "ndllexample-ios.ndll.hash" ] && md5sum ndllexample-ios.ndll | cut -d' ' -f1 > ndllexample-ios.ndll.hash
+              [ ! -f "ndllexample-ios.ndll.hash" ] && printf '%s' "$(md5sum ndllexample-ios.ndll | cut -d' ' -f1)" > ndllexample-ios.ndll.hash
             elif [ -f "ndllexample.ndll" ]; then
               echo "Only ndllexample.ndll found, renaming..."
               mv ndllexample.ndll ndllexample-ios.ndll
               if [ -f "ndllexample.ndll.hash" ]; then
                 mv ndllexample.ndll.hash ndllexample-ios.ndll.hash
               else
-                md5sum ndllexample-ios.ndll | cut -d' ' -f1 > ndllexample-ios.ndll.hash
+                printf '%s' "$(md5sum ndllexample-ios.ndll | cut -d' ' -f1)" > ndllexample-ios.ndll.hash
               fi
             else
               echo "No iOS ndll files found!"
