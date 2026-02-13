@@ -148,33 +148,41 @@ static void ndllexample_update_audio_visualizer(value samples,
                                                 value audioMembers,
                                                 double scaleMultiplier,
                                                 int halfLength) {
-  static const int scale_y_id = val_id("y");
-  static const int scale_id = val_id("scale");
-  static const int alpha_id = val_id("alpha");
-
   const int audioLength = val_array_size(audioMembers);
   const int audioLengths = audioLength - 1;
 
-  const int centerIndex = audioLengths / 2;
+  static const int scale_y_id = val_id("y");
+  static const int scale_id = val_id("scale");
+  static const int set_alpha_id = val_id("set_alpha");
 
-  const int loopEnd = (audioLength % 2 == 0) ? centerIndex : centerIndex + 1;
-
-  for (int i = 0; i < loopEnd; i++) {
+  for (int i = 0; i < halfLength; i++) {
     const double sample = val_float(val_array_i(samples, i));
     const double scaleValue = sample * scaleMultiplier;
 
-    const int mirroredIndex = audioLengths - i;
     value sprite = val_array_i(audioMembers, i);
-    value sprite_mirrored = val_array_i(audioMembers, mirroredIndex);
+    value sprite_2 = val_array_i(audioMembers, audioLengths - i);
 
     value scale1 = val_field(sprite, scale_id);
-    value scale2 = val_field(sprite_mirrored, scale_id);
+    value scale2 = val_field(sprite_2, scale_id);
 
     alloc_field(scale1, scale_y_id, alloc_float(scaleValue));
     alloc_field(scale2, scale_y_id, alloc_float(scaleValue));
 
-    alloc_field(sprite, alpha_id, alloc_float(sample));
-    alloc_field(sprite_mirrored, alpha_id, alloc_float(sample));
+    value set_alpha1 = val_field(sprite, set_alpha_id);
+    value set_alpha2 = val_field(sprite_2, set_alpha_id);
+    val_call1(set_alpha1, alloc_float(sample));
+    val_call1(set_alpha2, alloc_float(sample));
+  }
+
+  if (audioLength % 2 == 1) {
+    value sprite = val_array_i(audioMembers, halfLength);
+    const double sample = val_float(val_array_i(samples, halfLength));
+
+    value scale = val_field(sprite, scale_id);
+    alloc_field(scale, scale_y_id, alloc_float(sample * scaleMultiplier));
+
+    value set_alpha = val_field(sprite, set_alpha_id);
+    val_call1(set_alpha, alloc_float(sample));
   }
 }
 DEFINE_PRIME4v(ndllexample_update_audio_visualizer);
