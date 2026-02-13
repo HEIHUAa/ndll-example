@@ -2,8 +2,7 @@ name: Build NDLL
 
 on:
   push:
-    tags:
-      - 'v*'
+  pull_request:
   workflow_dispatch:
 
 jobs:
