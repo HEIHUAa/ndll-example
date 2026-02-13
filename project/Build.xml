@@ -4,8 +4,6 @@
 
 	<include name="${HXCPP}/build-tool/BuildCommon.xml"/>
 
-	<set name="LIBPREFIX" value="" if="android"/>
-
 	<files id="common">
 		<compilerflag value="-Iinclude"/>
 
@@ -30,6 +28,7 @@
 	<target id="NDLL" output="${NDLL_NAME}${CNE_EXT}" tool="linker" toolid="${STD_MODULE_LINK}">
 		<outdir name="../ndll/${BINDIR}"/>
 		<ext value=".ndll"/>
+		<prefix value=""/>
 		<files id="common"/>
 	</target>
 
