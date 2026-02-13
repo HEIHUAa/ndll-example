@@ -148,37 +148,33 @@ static void ndllexample_update_audio_visualizer(value samples,
                                                 value audioMembers,
                                                 double scaleMultiplier,
                                                 int halfLength) {
-  int audioLength = val_array_size(audioMembers);
-  int audioLengths = audioLength - 1;
+  static const int scale_y_id = val_id("y");
+  static const int scale_id = val_id("scale");
+  static const int alpha_id = val_id("alpha");
 
-  int scale_y_id = val_id("y");
-  int scale_id = val_id("scale");
-  int alpha_id = val_id("alpha");
+  const int audioLength = val_array_size(audioMembers);
+  const int audioLengths = audioLength - 1;
 
-  for (int i = 0; i < halfLength; i++) {
-    double sample = val_float(val_array_i(samples, i));
-    double scaleValue = sample * scaleMultiplier;
+  const int centerIndex = audioLengths / 2;
 
+  const int loopEnd = (audioLength % 2 == 0) ? centerIndex : centerIndex + 1;
+
+  for (int i = 0; i < loopEnd; i++) {
+    const double sample = val_float(val_array_i(samples, i));
+    const double scaleValue = sample * scaleMultiplier;
+
+    const int mirroredIndex = audioLengths - i;
     value sprite = val_array_i(audioMembers, i);
-    value sprite_2 = val_array_i(audioMembers, audioLengths - i);
+    value sprite_mirrored = val_array_i(audioMembers, mirroredIndex);
 
     value scale1 = val_field(sprite, scale_id);
-    value scale2 = val_field(sprite_2, scale_id);
+    value scale2 = val_field(sprite_mirrored, scale_id);
 
     alloc_field(scale1, scale_y_id, alloc_float(scaleValue));
     alloc_field(scale2, scale_y_id, alloc_float(scaleValue));
 
     alloc_field(sprite, alpha_id, alloc_float(sample));
-    alloc_field(sprite_2, alpha_id, alloc_float(sample));
-  }
-
-  if (audioLength % 2 == 1) {
-    value sprite = val_array_i(audioMembers, halfLength);
-    double sample = val_float(val_array_i(samples, halfLength));
-
-    value scale = val_field(sprite, scale_id);
-    alloc_field(scale, scale_y_id, alloc_float(sample * scaleMultiplier));
-    alloc_field(sprite, alpha_id, alloc_float(sample));
+    alloc_field(sprite_mirrored, alpha_id, alloc_float(sample));
   }
 }
 DEFINE_PRIME4v(ndllexample_update_audio_visualizer);
