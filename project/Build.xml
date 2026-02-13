@@ -27,7 +27,7 @@
 	<!-- suffix = ${MSVC_LIB_VERSION}${DEBUGEXTRA}${LIBEXTRA} -->
 	<target id="NDLL" output="${NDLL_NAME}${CNE_EXT}" tool="linker" toolid="${STD_MODULE_LINK}">
 		<outdir name="../ndll/${BINDIR}"/>
-		<ext value=".ndll" if="windows || mac || linux"/>
+		<ext value=".ndll"/>
 		<files id="common"/>
 	</target>
 
