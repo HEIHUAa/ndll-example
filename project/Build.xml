@@ -4,6 +4,8 @@
 
 	<include name="${HXCPP}/build-tool/BuildCommon.xml"/>
 
+	<set name="LIBPREFIX" value="" if="android"/>
+
 	<files id="common">
 		<compilerflag value="-Iinclude"/>
 
