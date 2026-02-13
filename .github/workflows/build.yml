@@ -145,6 +145,36 @@ jobs:
       - name: Build iOS
         run: haxelib run lime rebuild . ios
       
+      - name: Merge iOS Architectures
+        run: |
+          echo "=== Checking iPhone directory ==="
+          ls -la ndll/iPhone/ 2>/dev/null || echo "iPhone directory not found"
+          echo "=== Checking for other iOS directories ==="
+          find ndll -name "*.ndll" -o -name "*.a" 2>/dev/null || true
+          
+          if [ -d "ndll/iPhone" ]; then
+            cd ndll/iPhone
+            
+            if [ -f "ndllexample.ndll" ] && [ -f "ndllexample-ios.ndll" ]; then
+              echo "Found both files, merging..."
+              lipo -create ndllexample.ndll ndllexample-ios.ndll -output ndllexample-ios-merged.ndll
+              rm -f ndllexample.ndll ndllexample.ndll.hash ndllexample-ios.ndll ndllexample-ios.ndll.hash
+              mv ndllexample-ios-merged.ndll ndllexample-ios.ndll
+              echo "Merged iOS architectures successfully"
+            elif [ -f "ndllexample-ios.ndll" ]; then
+              echo "Only ndllexample-ios.ndll found, keeping it"
+            elif [ -f "ndllexample.ndll" ]; then
+              echo "Only ndllexample.ndll found, renaming..."
+              mv ndllexample.ndll ndllexample-ios.ndll
+              [ -f "ndllexample.ndll.hash" ] && mv ndllexample.ndll.hash ndllexample-ios.ndll.hash
+            else
+              echo "No iOS ndll files found!"
+            fi
+            
+            echo "=== Final iPhone directory contents ==="
+            ls -la
+          fi
+      
       - name: Upload iOS Artifact
         uses: actions/upload-artifact@v4
         with:
