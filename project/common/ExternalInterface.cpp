@@ -172,14 +172,6 @@ static void ndllexample_update_audio_visualizer(value samples,
     val_call1(val_field(sprite, set_alpha_id), alphaArg);
     val_call1(val_field(sprite_2, set_alpha_id), alphaArg);
   }
-
-  const value sprite = val_array_i(audioMembers, halfLength);
-  const double sample = val_float(val_array_i(samples, halfLength));
-
-  const value scale = val_field(sprite, scale_id);
-  alloc_field_numeric(scale, scale_y_id, sample * scaleMultiplier);
-
-  val_call1(val_field(sprite, set_alpha_id), alloc_float(sample));
 }
 DEFINE_PRIME4v(ndllexample_update_audio_visualizer);
 
