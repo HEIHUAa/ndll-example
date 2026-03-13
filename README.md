@@ -5,7 +5,7 @@
 ## Key Features
 
 - Automated cross-platform builds via GitHub Actions (Windows, Mac, Linux, iOS, Android)
-- Note: iOS and Android builds are currently untested and may not work
+- Note: iOS and Android builds have been tested and do not work
 
 ## Build instructions:
 
